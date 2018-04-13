@@ -32,7 +32,6 @@ def reg():
         username = json_data['username']
         password = json_data['password']
         if User.query.filter_by(username=username).first():
-            u = User.query.filter_by(username=username).first()
             message_e = 'The user has been already authorized'
             return message_e, 400
         else:
@@ -60,8 +59,7 @@ def auth():
         if u is None:
             message_e = 'user is not exist'
             return message_e, 404
-        #   if not u.verify_password(password):
-        if not u.password_hash == password:
+        if not u.verify_password(password):
             message_e = 'password incorrect'
             return message_e, 400
         else:
