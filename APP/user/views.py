@@ -16,7 +16,7 @@ def admin_login(func):
         if u and u.auth_level == 1:
             return func(*args, **kwargs)
         else:
-            return 'you are not administrator', 400
+            return jsonify({'message': 'you are not administrator'}), 400
     return wrap
 
 
@@ -33,7 +33,7 @@ def reg():
         password = json_data['password']
         if User.query.filter_by(username=username).first():
             message_e = 'The user has been already authorized'
-            return message_e, 400
+            return jsonify({'message': message_e}), 400
         else:
             u = User()
             u.username = username
@@ -42,14 +42,14 @@ def reg():
             db.session.add(u)
             db.session.commit()
             message_e = 'authorize success'
-            return message_e
+            return jsonify({'message': message_e})
 
 
 @user.route('/auth', methods=['GET', 'POST'])
 def auth():
     if request.method == 'GET':
         message_e = 'only post method is supported'
-        return message_e
+        return jsonify({'message': message_e})
     else:
         data = request.get_data()
         json_data = json.loads(data)
@@ -58,10 +58,10 @@ def auth():
         u = User.query.filter_by(username=username).first()
         if u is None:
             message_e = 'user is not exist'
-            return message_e, 404
+            return jsonify({'message': message_e}), 404
         if not u.verify_password(password):
             message_e = 'password incorrect'
-            return message_e, 400
+            return jsonify({'message': message_e}), 400
         else:
             return_data = {'id': u.id, 'username': username}
             rsp = make_response(jsonify(return_data))
