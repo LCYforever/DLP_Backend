@@ -34,7 +34,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     # 连接测试环境数据库的URL
     SQLALCHEMY_DATABASE_URI = (os.environ.get('DEV_DATABASE_URL') or
-                               'mysql://root:root@localhost/kubernetes')
+                               'mysql://root:123456@localhost/dlp_backend')
 
 
 class ProductionConfig(Config):
@@ -43,7 +43,7 @@ class ProductionConfig(Config):
     DEBUG = False
     # 连接生产环境数据库的URL
     SQLALCHEMY_DATABASE_URI = (os.environ.get('PRO_DATABASE_URL') or
-                               'mysql://root:root@localhost/kubernetes')
+                               'mysql://root:root@localhost/dlp_backend')
 
 
 config = {

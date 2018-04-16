@@ -3,7 +3,6 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from itsdangerous import SignatureExpired, BadTimeSignature
 from . import db, login_manager
 from flask import current_app
 
@@ -11,10 +10,9 @@ from flask import current_app
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(128), nullable=False)
+    namespace = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    namespace = db.Column(db.String(128))
-    auth_level = db.Column(db.Integer, nullable=False, default=0)
+    privilege = db.Column(db.Integer, default=1)   # 权限：0代表管理员，1代表普通用户
 
     # 以下函数分别用于对用户密码进行读取保护、散列化以及验证密码
     @property
@@ -38,11 +36,7 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
-        except SignatureExpired as e:
-            raise e
-            return None
-        except BadTimeSignature as e:
-            raise e
+        except:
             return None
         uid = data.get('id')
         if uid:
@@ -51,8 +45,6 @@ class User(UserMixin, db.Model):
 
 
 # 插件flask_login的回调函数，用于读取用户
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)

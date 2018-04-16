@@ -28,8 +28,10 @@ def create_app(config_name):
     login_manager.init_app(app)
 
     # 注册路由
-    from .user import user as user_blueprint
-    app.register_blueprint(user_blueprint, url_prefix='/user')
+    from .util import filter_blueprint
+    app.register_blueprint(filter_blueprint)
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
 
     return app
 
